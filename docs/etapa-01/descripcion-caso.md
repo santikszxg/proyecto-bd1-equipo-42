@@ -1,3 +1,4 @@
+# Descripcion del caso
 El presente proyecto propone el desarrollo de un sistema de información destinado a la gestión de una farmacia o cadena de farmacias que cuenta con una o más sucursales.  
 El sistema permitirá administrar la información correspondiente a las sucursales, incluyendo sus datos de identificación, dirección, localidad, medios de contacto y horarios de atención. También permitirá asociar los empleados a las distintas sucursales y registrar sus datos personales, el rol que desempeñan y su horario laboral.  
 Los empleados podrán desempeñar diferentes roles, entre ellos cajero, farmacéutico y personal de seguridad. En el caso de los farmacéuticos, se registrará además su matrícula profesional. El sistema contempla la Dirección Técnica de las sucursales, registrando el farmacéutico que la ejerce y las fechas correspondientes al inicio y finalización de dicha función.  
