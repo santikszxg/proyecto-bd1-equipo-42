@@ -2,8 +2,8 @@
 ## Entidades:  
 - Sucursal: Representa las ubicaciones físicas del negocio. Sus atributos son Dirección, Num. Teléfono(único), Localidad, Cantidad de empleados y Horario de atención (multivaluado)  
 - Direct. Técnica: Es una entidad débil vinculada a la sucursal. Sus atributos son ID. Dirección Técnica (único), Fecha de inicio y Fecha de finalización.  
-- Stock: conserva sus atributos originales del DER (id_stock como PK, cantidad_productos). La relación "pertenece" con Producto ya no se resuelve con una FK directa, sino mediante la tabla intermedia Pertenece.
-- Pertenece: tabla intermedia creada para resolver la relación de muchos a muchos (N:M) entre STOCK y PRODUCTO. Contiene dos claves foráneas: id_stock e id_producto.
+- Stock: Entidad utilizada para el manejo del inventario de la sucursal. Sus atributos son ID. Stock (único) y Cantidad de productos.
+- Pertenece: tabla intermedia creada. Contiene dos claves foráneas: id_stock e id_producto.
 - tipo de empleado: Es una entidad supertipo que agrupa al personal. Sus atributos son DNI (único), Nombre, Apellido y Hora de inicio. Esta entidad se especializa en tres subtipos:  
 - Farmacéutico: Tiene el atributo específico Matricula profesional.  
 - Cajero: No posee atributos propios, pero se vincula a las ventas mediante la relación "Atiende".  
@@ -77,7 +77,8 @@ También separamos a los empleados en Farmacéutico, Cajero y Seguridad, y cada 
 + **Detalle_de_compra**: tabla creada para guardar y preservar los detalles de la compra del cliente. No hubo modificaciones con respecto a su versión DER.
   
 + **Contiene**:  tabla intermedia creada para resolver la relación de muchos a muchos entre *COMPRA* y *PRODUCTO*.
-  
++ **Stock**: conserva sus atributos originales del DER (id_stock como PK, cantidad_productos). La relación "pertenece" con Producto ya no se resuelve con una FK directa, sino mediante la tabla intermedia Pertenece.
++**Pertenece**: tabla intermedia creada para resolver la relación de muchos a muchos (N:M) entre STOCK y PRODUCTO. Contiene dos claves foráneas: id_stock e id_producto.
 + **Producto**: mantiene todos sus atributos.
   
 + **Stock**: se agregó la clave foránea (FK) `id_producto` consecuencia de la relación *"pertenece"* del DER.
