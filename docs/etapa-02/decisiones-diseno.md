@@ -86,3 +86,13 @@ También separamos a los empleados en Farmacéutico, Cajero y Seguridad, y cada 
 + **Suministra**: tabla intermedia que contiene dos claves foráneas `id_proovedor` e `id_producto`, respectivamente. Creada para resolver la relación de *N:M*.
   
 + **Proveedor**: no hubo cambios con respecto a sus atributos del DER.
+
++ **-Modificaciones del diseño-**
+
++ Se modifico la ubicación del atributo `Cantidad_de_productos` el cual estaba ubicada en la tabla *"Stock"* y se la Re-implemento moviéndola a la tabla intermedia *"Pertenece"*. Esto con el propósito de poder tener una exactitud de la cantidad de productos de un tipo que posee un Stock y no saber la cantidad de productos en general que tiene un Stock.
+
++ Por otra parte, tras una análisis se pudo observar que la tabla *"Sucursal"* y *"Proveedor"* tenían características en comun (localidad y dirección), las cuales ademas no dependian directamente de sus claves primarias, por ende para resolver una cuestion de diseño y empezar a resolver problemas de la normalizacion se diseño una nueva tabla *"Ubicacion"* la cual poseía un `cod_localizacion` como clave primaria (PK) y dos campos como datos (localidad y direccion). De esta forma mantenemos a las tablas de formas mas puras.
+
++ **Horario_Atencion**: Se agrego esta tabla, ya que al ser un valor multivaluado representado en el diagrama DER, se necesitaba registrar distintos tipos de horarios según la sucursal, por efecto de esto, en la tabla *"Horario_atencion"* se agregaron los datos `Cod_horario` siendo una clave Primaria (PK), y el horario el cual atiende esa sucursal.
+
++ Se asigno la clave Primaria a la tabla *"Farmacéutico"* la cual no tenía hasta el momento. Se estableció a `matricula_profesional` como representante de esa clave primaria (PK).
