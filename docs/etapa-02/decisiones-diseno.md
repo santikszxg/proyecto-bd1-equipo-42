@@ -1,0 +1,13 @@
+Entidades:  
+- Sucursal: Representa las ubicaciones físicas del negocio. Sus atributos son Dirección, Num. Teléfono(único), Localidad, Cantidad de empleados y Horario de atención (multivaluado)  
+- Direct. Técnica: Es una entidad débil vinculada a la sucursal. Sus atributos son ID. Dirección Técnica (único), Fecha de inicio y Fecha de finalización.  
+- Stock: Entidad utilizada para el manejo del inventario de la sucursal. Sus atributos son ID. Stock (único) y Cantidad de productos.  
+- tipo de empleado: Es una entidad supertipo que agrupa al personal. Sus atributos son DNI (único), Nombre, Apellido y Hora de inicio. Esta entidad se especializa en tres subtipos:  
+- Farmacéutico: Tiene el atributo específico Matricula profesional.  
+- Cajero: No posee atributos propios, pero se vincula a las ventas mediante la relación "Atiende".  
+- Seguridad: No posee atributos propios. 
+- producto: Es una entidad débil, representa los artículos disponibles en el sistema. Sus atributos son ID. Producto (único), Nombre, Precio, Descripción y Tipo de producto.  
+- Proveedor: Entidad que suministra la mercadería. Sus atributos son ID. Proveedor (único), Razón social, Dirección, Localidad y Numero de teléfono.  
+- Compra: Representa la transacción una venta. Sus atributos son ID. Compra (único), Fecha, Monto y Método de pago.  
+- Detalle de compra: Es una entidad débil vinculada a la entidad "Compra" que sirve para desglosar los detalles específicos llevados en esa transacción. Sus atributos son Cod. Detalle (único), Cantidad del producto e Historial de precios unitarios.   
+- Cliente: Entidad que registra a los clientes. Sus atributos son ID. Cliente (único), Obra social (Opcional) y Receta (Opcional).  
