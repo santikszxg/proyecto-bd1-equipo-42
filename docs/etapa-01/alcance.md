@@ -1,3 +1,4 @@
+# Alcance del sistema
 El sistema abarca la gestión de la información y de las operaciones principales relacionadas con una farmacia o cadena de farmacias y sus sucursales.  
 Dentro del alcance del sistema se contempla:  
 - Registrar y administrar la farmacia o cadena.  
