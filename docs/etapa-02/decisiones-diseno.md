@@ -1,4 +1,5 @@
-# Entidades:  
+# Diagrama de entidad-relación
+## Entidades:  
 - Sucursal: Representa las ubicaciones físicas del negocio. Sus atributos son Dirección, Num. Teléfono(único), Localidad, Cantidad de empleados y Horario de atención (multivaluado)  
 - Direct. Técnica: Es una entidad débil vinculada a la sucursal. Sus atributos son ID. Dirección Técnica (único), Fecha de inicio y Fecha de finalización.  
 - Stock: Entidad utilizada para el manejo del inventario de la sucursal. Sus atributos son ID. Stock (único) y Cantidad de productos.  
@@ -12,7 +13,7 @@
 - Detalle de compra: Es una entidad débil vinculada a la entidad "Compra" que sirve para desglosar los detalles específicos llevados en esa transacción. Sus atributos son Cod. Detalle (único), Cantidad del producto e Historial de precios unitarios.   
 - Cliente: Entidad que registra a los clientes. Sus atributos son ID. Cliente (único), Obra social (Opcional) y Receta (Opcional).
 
-# Relaciones y cardinalidades
+## Relaciones y cardinalidades
 
 Acá van las relaciones que armamos en el DER, qué entidades conectan y su cardinalidad. Usamos notación pata de gallo.
 
@@ -50,3 +51,36 @@ También separamos a los empleados en Farmacéutico, Cajero y Seguridad, y cada 
 
 **Posee** (Producto – Detalle de compra) → 1:1
 - Cada detalle corresponde a un producto.
+
+---
+
+# Modelo relacional
+
+## Tablas
++ **Sucursal**: conserva todos los atributos del diagrama entidad-relación y se agregó una PK id_sucursal. Sus antiguas relaciones ahora se ven reflejadas en sus FK (`id_stock`, `id_empleado`, `id_direccion_tecnica`).
+  
++ **Director_tecnico**: pasó de ser una entidad asociativa a una tabla. Sus atributos se mantienen.
+
++ **Farmaceutico**: se agregan las claves foráneas `id_empleado` al haber sido una especialización de la super entidad *TIPO_DE_EMPLEADO*, e `id_direccion_tecnica` al mantener la relación *"ejerce"* mencionado en el inciso de *Relaciones y Cardinalidades*.
+  
++ **Tipo_de_empleado**: tiene como PK `id_empleado` y se mantienen los atributos del DER. Se agrega `hora_fin`.
+  
++ **Seguridad**: un tipo de empleado, ergo contiene una clave foránea `id_empleado`.
+  
++ **Cajero**: contiene 2 FK; `id_empleado`y `id_compra`(para cumplir con la relación *Atiende*).
+  
++ **Compra**: se mantuvieron todos sus atributos. Se agregó la FK `id_cliente` para mantener la relación.
+  
++ **Cliente**: con un clave primaria `id_cliente` se mantuvieron los atributos opcionales `obra_social` y `receta`.
+  
++ **Detalle_de_compra**: tabla creada para guardar y preservar los detalles de la compra del cliente. No hubo modificaciones con respecto a su versión DER.
+  
++ **Contiene**:  tabla intermedia creada para resolver la relación de muchos a muchos entre *COMPRA* y *PRODUCTO*.
+  
++ **Producto**: mantiene todos sus atributos.
+  
++ **Stock**: se agregó la clave foránea (FK) `id_producto` consecuencia de la relación *"pertenece"* del DER.
+  
++ **Suministra**: tabla intermedia que contiene dos claves foráneas `id_proovedor` e `id_producto`, respectivamente. Creada para resolver la relación de *N:M*.
+  
++ **Proveedor**: no hubo cambios con respecto a sus atributos del DER.
