@@ -50,27 +50,6 @@ Sistema de información para administrar las sucursales, empleados, productos, s
 
 ---
 
-## Scripts SQL
-
-### Estructura de la base de datos
-- [Creación de la base de datos (DDL)](sql/ddl/crear_bd.sql.txt)
-
-### Datos de prueba
-- [Carga de datos de prueba (DML)](sql/dml/datos_prueba.sql.txt)
-
-### Consultas
-- [Comprobante de venta](sql/consultas/comprobante_venta.sql.txt)
-- [Consulta avanzada](sql/consultas/consulta_avanzada.sql.txt)
-- [Informe de ventas](sql/consultas/informe_ventas.sql.txt)
-
-### Objetos técnicos
-- [Funciones](sql/tecnico/funciones/)
-- [Procedimientos](sql/tecnico/procedimientos/)
-- [Transacciones](sql/tecnico/transacciones/)
-- [Triggers](sql/tecnico/triggers/)
-- [Seguridad](sql/tecnico/seguridad/)
-
----
 
 ## Estructura del repositorio
 
