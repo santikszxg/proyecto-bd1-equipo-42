@@ -77,10 +77,10 @@ También separamos a los empleados en Farmacéutico, Cajero y Seguridad, y cada 
 + **Detalle_de_compra**: tabla creada para guardar y preservar los detalles de la compra del cliente. No hubo modificaciones con respecto a su versión DER.
   
 + **Contiene**:  tabla intermedia creada para resolver la relación de muchos a muchos entre *COMPRA* y *PRODUCTO*.
-+ 
-+ **Stock**: conserva sus atributos originales del DER (id_stock como PK, cantidad_productos). La relación "pertenece" con Producto ya no se resuelve con una FK directa, sino mediante la tabla intermedia Pertenece.
-+ 
-+ **Pertenece**: tabla intermedia creada para resolver la relación de muchos a muchos (N:M) entre STOCK y PRODUCTO. Contiene dos claves foráneas: id_stock e id_producto.
+  
++ **Stock**: conserva sus atributos originales del DER (`id_stock` como PK, `cantidad_productos`). La relación "pertenece" con Producto ya no se resuelve con una FK directa, sino mediante la tabla intermedia Pertenece.
+  
++ **Pertenece**: tabla intermedia creada para resolver la relación de muchos a muchos (N:M) entre STOCK y PRODUCTO. Contiene dos claves foráneas: `id_stock` e `id_producto`.
   
 + **Producto**: mantiene todos sus atributos.
   
@@ -90,7 +90,7 @@ También separamos a los empleados en Farmacéutico, Cajero y Seguridad, y cada 
   
 + **Proveedor**: no hubo cambios con respecto a sus atributos del DER.
 
-## **-Modificaciones del diseño-**
+## **Modificaciones del diseño**
 
 + Se modifico la ubicación del atributo `Cantidad_de_productos` el cual estaba ubicada en la tabla *"Stock"* y se la Re-implemento moviéndola a la tabla intermedia *"Pertenece"*. Esto con el propósito de poder tener una exactitud de la cantidad de productos de un tipo que posee un Stock y no saber la cantidad de productos en general que tiene un Stock.
 
