@@ -56,39 +56,47 @@ También separamos a los empleados en Farmacéutico, Cajero y Seguridad, y cada 
 ---
 
 # Modelo relacional
+## 1. Resolución de Jerarquías (Superclase / Subclase)
 
-## Tablas
-+ **Sucursal**: conserva todos los atributos del diagrama entidad-relación y se agregó una PK id_sucursal. Sus antiguas relaciones ahora se ven reflejadas en sus FK (`id_stock`, `id_empleado`, `id_direccion_tecnica`).
-  
-+ **Director_tecnico**: pasó de ser una entidad asociativa a una tabla. Sus atributos se mantienen.
+#### Para modelar a los empleados, se optó por la estrategia de mantener la tabla de la superclase y crear tablas para las subclases, vinculándolas mediante claves foráneas.
 
-+ **Farmaceutico**: se agregan las claves foráneas `id_empleado` al haber sido una especialización de la super entidad *TIPO_DE_EMPLEADO*, e `id_direccion_tecnica` al mantener la relación *"ejerce"* mencionado en el inciso de *Relaciones y Cardinalidades*.
-  
-+ **Tipo_de_empleado**: tiene como PK `id_empleado` y se mantienen los atributos del DER. Se agrega `hora_fin`.
-  
-+ **Seguridad**: un tipo de empleado, ergo contiene una clave foránea `id_empleado`.
-  
-+ **Cajero**: contiene 2 FK; `id_empleado`y `id_compra`(para cumplir con la relación *Atiende*).
-  
-+ **Compra**: se mantuvieron todos sus atributos. Se agregó la FK `id_cliente` para mantener la relación.
-  
-+ **Cliente**: con un clave primaria `id_cliente` se mantuvieron los atributos opcionales `obra_social` y `receta`.
-  
-+ **Detalle_de_compra**: tabla creada para guardar y preservar los detalles de la compra del cliente. No hubo modificaciones con respecto a su versión DER.
-  
-+ **Contiene**:  tabla intermedia creada para resolver la relación de muchos a muchos entre *COMPRA* y *PRODUCTO*.
-  
-+ **Stock**: conserva sus atributos originales del DER (`id_stock` como PK, `cantidad_productos`). La relación "pertenece" con Producto ya no se resuelve con una FK directa, sino mediante la tabla intermedia Pertenece.
-  
-+ **Pertenece**: tabla intermedia creada para resolver la relación de muchos a muchos (N:M) entre STOCK y PRODUCTO. Contiene dos claves foráneas: `id_stock` e `id_producto`.
-  
-+ **Producto**: mantiene todos sus atributos.
-  
-+ **Stock**: se agregó la clave foránea (FK) `id_producto` consecuencia de la relación *"pertenece"* del DER.
-  
-+ **Suministra**: tabla intermedia que contiene dos claves foráneas `id_proovedor` e `id_producto`, respectivamente. Creada para resolver la relación de *N:M*.
-  
-+ **Proveedor**: no hubo cambios con respecto a sus atributos del DER.
++ Tipo_de_empleado (Superclase): Se definió id_empleado como Clave Primaria (PK). Se conservaron los atributos del DER y se tomó la decisión de agregar el atributo `hora_fin`.
+
++ Subclases (Farmaceutico, Seguridad, Cajero): Se crearon como tablas independientes, donde cada una incorpora `id_empleado` como Clave Foránea (FK) y primaria, heredando así los atributos de la superclase.
+
++ En Farmaceutico, se agregó además la FK `id_direccion_tecnica` para reflejar la relación "ejerce".
+
++ En Cajero, se agregó la FK `id_compra` para resolver la relación "atiende".
+
+## 2. Resolución de Relaciones Muchos a Muchos (N:M)
+
+#### Se aplicó la regla de creación de tablas intermedias para absorber las cardinalidades de N:M, migrando las claves primarias de las entidades involucradas como claves foráneas:
+
++ **Contiene**: Creada para resolver la relación N:M entre *COMPRA* y *PRODUCTO*.
+
++ **Suministra**: Creada para resolver la relación N:M entre *PROVEEDOR* y *PRODUCTO*, conteniendo `id_proveedor` e `id_producto` como FKs.
+
++ **Pertenece**: Se decidió crear esta tabla para gestionar la relación N:M entre *STOCK* y *PRODUCTO* (conteniendo `id_stock` e `id_producto`), descartando la opción de una FK directa.
+
+## 3. Transformación de Entidades Asociativas y Tablas de Detalle
+
++ **Director_tecnico**: Pasó de ser una entidad asociativa en el DER a consolidarse como una tabla independiente en el modelo relacional, conservando intactos sus atributos originales.
+
++ **Detalle_de_compra**: Se consolidó como tabla para preservar el histórico de los detalles de las compras, sin requerir modificaciones respecto a su versión en el DER.
+
+## 4. Creación de claves foráneas
+
++ **Sucursal**: Se le asignó una PK artificial (`id_sucursal`). Las relaciones que poseía en el DER se transformaron en las FKs: `id_stock`, id_empleado e `id_direccion_tecnica`.
+
++ **Compra**: Mantuvo sus atributos originales y recibió la FK `id_cliente` para materializar la relación con el cliente que la realiza.
+
+## 5. Consolidación de Entidades Base
+
++ **Cliente**: Se definió `id_cliente` como PK. Se tomó la decisión de mantener `obra_social` y receta como atributos opcionales (admiten valores nulos) dentro de la misma tabla.
+
++ **Producto** y **Proveedor**: No sufrieron alteraciones respecto al DER, manteniendo todos sus atributos originales de forma directa.
+
+---
 
 ## **Modificaciones del diseño**
 
