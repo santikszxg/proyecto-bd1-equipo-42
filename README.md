@@ -1,8 +1,20 @@
-# Proyecto Bases de Datos I – Equipo 42
+<div align="center">
 
-**Tema:** Sistema de gestión para una cadena de farmacias
+# 💊 Sistema de Gestión de Farmacias
+### Proyecto Integrador — Bases de Datos I (Equipo 42)
 
-Sistema de información para administrar las sucursales, empleados, productos, stock, clientes y ventas de una cadena de farmacias.
+<p align="center">
+  <img width="200" alt="Vista previa del sistema" src="https://github.com/user-attachments/assets/778b6a3e-119e-44d3-841d-189245212f53" />
+</p>
+
+![Status](https://img.shields.io/badge/Estado-En_Desarrollo-blue?style=for-the-badge)
+![Database](https://img.shields.io/badge/Base_de_Datos-Relacional-informational?style=for-the-badge)
+
+<p align="center">
+  Solución integral para el modelado relacional y la administración de sucursales, inventario, personal y transacciones comerciales en una red de farmacias.
+</p>
+
+</div>
 
 ## Integrantes
 - Lezcano, Axel Antonio
