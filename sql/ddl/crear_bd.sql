@@ -143,3 +143,88 @@ CREATE TABLE PROVEEDOR (
   CONSTRAINT PK_ID_Proveedor PRIMARY KEY (ID_Proveedor),
   CONSTRAINT FK_Cod_Localizacion_Proveedor FOREIGN KEY (Cod_Localizacion) REFERENCES Ubicacion(Cod_Localizacion)
 );
+
+--tabla intermedia para una mejor remplecentaicon sobre los datos
+--Al querer almacenar muchos tipos de productos dentro de un STOCK
+CREATE TABLE POSEE(
+  ID_Stock INT NOT NULL,
+  ID_Producto INT NOT NULL,
+  Cantidad_Productos INT NOT NULL,
+  CONSTRAINT PK_ID_Stock_ID_Producto PRIMARY KEY (ID_Stock, ID_Producto),
+  CONSTRAINT FK_ID_Stock_Posee FOREIGN KEY (ID_Stock) REFERENCES STOCK(ID_Stock),
+  CONSTRAINT FK_ID_Producto_Posee FOREIGN KEY (ID_Producto) REFERENCES PRODUCTO(ID_Producto)
+);
+
+--Tabla para la representacion de N : M
+CREATE TABLE CONTIENE ( --X
+  ID_Producto INT NOT NULL,
+  ID_Compra INT NOT NULL,
+  CONSTRAINT PK_ID_Producto_ID_Compra PRIMARY KEY (ID_Producto, ID_Compra),
+  FOREIGN KEY (ID_Producto) REFERENCES PRODUCTO(ID_Producto),
+  FOREIGN KEY (ID_Compra) REFERENCES COMPRA(ID_Compra)
+);
+
+--tabla para la representacion de N:M
+CREATE TABLE SUMINISTRA (
+  ID_Proveedor INT NOT NULL,
+  ID_Producto INT NOT NULL,
+  CONSTRAINT PK_ID_Proveedor_ID_Producto PRIMARY KEY (ID_Proveedor, ID_Producto),
+  CONSTRAINT FK_ID_Proveedor FOREIGN KEY (ID_Proveedor) REFERENCES PROVEEDOR(ID_Proveedor),
+  CONSTRAINT FK_ID_Producto_Suministra FOREIGN KEY (ID_Producto) REFERENCES PRODUCTO(ID_Producto)
+);
+
+--CAMBIOS REALIZADOS
+
+DROP TABLE CONTIENE;
+
+DROP TABLE DETALLE_DE_COMPRA;
+
+--Creacion de 2 tablas nuevas
+
+CREATE TABLE TICKET (
+Cod_Ticket INT IDENTITY(1,1) NOT NULL,
+Fecha DATE NOT NULL DEFAULT GETDATE(),
+ID_compra INT NOT NULL,
+CONSTRAINT PK_Cod_ticket PRIMARY KEY (Cod_ticket),
+CONSTRAINT FK_ID_Compra_Ticket FOREIGN KEY (ID_compra) REFERENCES COMPRA(ID_Compra)
+);
+
+CREATE TABLE DETALLE_HISTORICO (
+ID_Producto INT NOT NULL,
+Cod_Ticket INT NOT NULL,
+Precio_unitario_Historico DECIMAL(5,2) NOT NULL,
+CONSTRAINT PK_ID_Producto_Cod_Ticket PRIMARY KEY (ID_Producto, Cod_Ticket),
+CONSTRAINT FK_ID_Producto FOREIGN KEY (ID_Producto) REFERENCES PRODUCTO(ID_Producto),
+CONSTRAINT FK_Cod_Ticket FOREIGN KEY (Cod_Ticket) REFERENCES TICKET(Cod_Ticket)
+);
+
+--cambiar la cantidad del var char de la tabla ubicacion
+ALTER TABLE UBICACION ALTER COLUMN Localidad VARCHAR(40) NOT NULL;
+ALTER TABLE UBICACION ALTER COLUMN direccion VARCHAR(40) NOT NULL;
+
+--cambios con check y default sobre la tabla "POSEE"
+ALTER TABLE POSEE ADD CONSTRAINT DF_Cantidad_Productos DEFAULT 1 FOR Cantidad_Productos,
+CONSTRAINT CK_Cantida_Productos CHECK (Cantidad_Productos > 0);
+
+--Detalle historico agrandar la parte entera del decimal
+ALTER TABLE DETALLE_HISTORICO ALTER COLUMN Precio_unitario_Historico DECIMAL(10, 2) NOT NULL;
+
+--carga de campos nuevos en tablas SEGURIDAD y STOCK
+-- Agregar atributo "lote" a la tabla STOCK y su restricción DEFAULT
+ALTER TABLE STOCK ADD lote DATE NOT NULL;
+
+ALTER TABLE STOCK ADD CONSTRAINT DF_STOCK_lote DEFAULT GETDATE() FOR lote;
+
+-- Agregar atributo opcional "credencial" a la tabla SEGURIDAD
+ALTER TABLE SEGURIDAD ADD credencial VARCHAR(60) NULL; 
+
+--Modificaciones en los tipos de datos de la tabla tipo de empleado
+ALTER TABLE TIPO_DE_EMPLEADO ALTER COLUMN Hora_fin TIME(0) NOT NULL;  
+ALTER TABLE TIPO_DE_EMPLEADO ALTER COLUMN Hora_inicio TIME(0) NOT NULL; 
+
+--modificaciones en los tipos de datos de la tabla horario de atencion
+ALTER TABLE HORARIO_ATENCION ALTER COLUMN Horario TIME(0) NOT NULL; 
+
+--modificaciones en los tipos de datos de la tabla director tecnico
+ALTER TABLE DIRECT_TECNICO ALTER COLUMN Fecha_de_inicio DATE NOT NULL;
+ALTER TABLE DIRECT_TECNICO ALTER COLUMN Fecha_de_finalizacion DATE NOT NULL;
