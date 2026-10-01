@@ -71,3 +71,55 @@ Estas tablas dependen de la existencia previa de registros en las tablas indepen
 * **`PROVEEDOR`**: Registra las entidades comerciales encargadas del abastecimiento de la farmacia.
   * Contiene datos de identificación y contacto como `Razon_social` y `Numero_de_telefono`.
   * Determina la radicación del proveedor mediante la clave foránea `Cod_Localizacion`, la cual hace referencia a la tabla `UBICACION`.
+* **`POSEE`**: Tabla intermedia que representa la relación de N : M.
+  * Registra la cantidad de productos de un tipo que posee un stock mediante `Cantidad_Stock`.
+  * Tabla intermedia que conectan a las tablas `STOCK` y `PRODUCTO` tomando como clave primaria y foranea los campos de `ID_Stock` e `ID_Producto`.
+*  **`CONTIENE`**: Tabla la cual hacia una mala representación en un inicio con el anterior modelo relacional.
+  *  Resuelve una relación de muchos a muchos, conectando las tablas de `PRODUCTO` y `COMPRA` mediante el uso de las claves foráneas referenciadas mediante el `ID_Producto` y `ID_Compra`.
+* **`SUMINISTRA`**: Tabla intermedia que representa la relacion N : M.
+  * Resuelve la relacion de muchos a muchos mediante la conexion en la clave foranea y primaria referenciada por el campo `ID_Proveedor` e `ID_Producto`.
+  * Tabla intermedia que conecta a las tablas `PROVEEDOR` y `PRODUCTO`.
+
+# Cambios Realizados
+
+## Eliminacion De Tablas
+
+Se realizaron la eliminacion de 2 tablas
+
+* Se realizo la eliminación completa de la tabla `CONTIENE` ya que no hacia una correcta representacion al modelo. Al no tener datos previamente cargados, simplemente realizamos la operacion `DROP`.
+* Se realizo la eliminación completa de la tabla `DETALLE_DE_COMPRA` ya que no hacia una correcta representacion al modelo. Al no tener datos previamente cargados, simplemente realizamos la operacion `DROP` nuevamente.
+
+## Creacion De Tablas
+
+Se realización al creación de 2 tablas nuevas.
+
+* **`TICKET`**: Representa el ticket el cual es generado mediante la colaboración de una compra especifica que se registra. Tabla independiente.
+  * Registra la fecha en la cual se realizó la compra mediante le campo `Fecha`.
+  * Representa una relación mediante una clave foránea con la tabla `COMPRA` mediante el campo `ID_Compra`.
+  * Tiene como clave primaria un auto incremental representada en la columna `Cod_Ticket`.
+* **`DETALLE_HISTORICO`**: Representa el detalle historico sobre el precio unitario de un producto. Tabla independiente.
+  * Contine la representación del precio unitario de un producto del tipo de dato `DECIMAL` la cual representa hasta cinco espacios para la parte entera y dos para la parte decimal.
+  * Claves primarias y foraneas representada por las columnas `ID_Producto` y `Cod_Ticket`.
+ 
+ ## Otros Cambios Realizados
+
+ * Cambiar la cantidad del `varchar` de la tabla ubicacion:
+  * `Localidad`: representacion a 40 caracteres.
+  * `Dirección`: representación a 40 caracteres.
+* cambios con `check` y `default` sobre la tabla `POSEE`:
+  * Se añadió la restriccion `DEFAULT`, el cual permite que se registre siempre al menos una unidad de productos
+  * Se añadio la restriccion `CHECK` la cual comprueba que la cantidad de productos registrados no sean menor a 0.
+* Detalle historico agrandar la parte entera del decimal:
+  * Se agrando la cantidad de decimales enteros 5 --> 10.
+* carga de campos nuevos en tablas `SEGURIDAD` y `STOCK`:
+  *  Agregacion atributo `lote` a la tabla `STOCK` y su restricción `DEFAULT` para siempre tener una fecha.
+* Agregacion atributo opcional: 
+  * `credencial` a la tabla `SEGURIDAD`.
+* Modificaciones en los tipos de datos de la tabla tipo de `EMPLEADO`:
+  * Modificacion de la columna `Hora_fin` y  `Hora_inicio` a `TIME(0)`
+* Modificaciones en los tipos de datos de la tabla horario de `ATENCION`:
+  * Modificacion de la columna `Horario` a `TIME(0)`
+* Modificaciones en los tipos de datos de la tabla director `TECNICO`:
+  * Modificaciones en los campos `Fecha_de_inicio` y `Fecha_de_finalizacion` a `DATE`. 
+   
+  
