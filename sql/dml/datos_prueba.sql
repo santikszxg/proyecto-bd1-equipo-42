@@ -43,3 +43,42 @@ VALUES ('Marta', 'Suárez', 28456789, '12:00', '20:00');
 
 INSERT INTO CAJERO (ID_Empleado, ID_Compra)
 VALUES (2, 1);
+-- CASO 6: Alta valida de proveedor y relacion N:M con producto (SUMINISTRA)
+-- Crea una ubicacion, un proveedor asociado a ella y lo vincula con el producto 1.
+-- Deberia insertarse sin errores (UBICACION ya fue ampliada a VARCHAR(40) con el ALTER).
+INSERT INTO UBICACION (Localidad, direccion)
+VALUES ('Rosario', 'Av. Pellegrini 1234');
+
+INSERT INTO PROVEEDOR (Numero_de_telefono, Razon_social, Cod_Localizacion)
+VALUES ('341-4111111', 'Droguería Central SA', 1);
+
+INSERT INTO SUMINISTRA (ID_Proveedor, ID_Producto)
+VALUES (1, 1);
+
+-- CASO 7: Alta valida de TICKET usando el valor DEFAULT de la fecha
+-- No se indica Fecha, asi que debe tomar GETDATE() automaticamente.
+-- Se vincula a la compra 1 (creada en el caso 3). Deberia insertarse sin errores.
+INSERT INTO TICKET (ID_compra) VALUES (1);
+
+SELECT Cod_Ticket, Fecha, ID_compra FROM TICKET; -- verificar que Fecha tenga la fecha actual
+
+-- CASO 8: Alta valida en DETALLE_HISTORICO (producto + ticket con precio historico)
+-- Registra el precio del producto 1 en el ticket 1. 850.00 entra en DECIMAL(5,2).
+-- Deberia insertarse sin errores.
+INSERT INTO DETALLE_HISTORICO (ID_Producto, Cod_Ticket, Precio_unitario_Historico)
+VALUES (1, 1, 850.00);
+
+-- CASO 9: Precio fuera de rango en DETALLE_HISTORICO (DECIMAL(5,2))
+-- DECIMAL(5,2) admite como maximo 999.99. Con 1500.50 deberia fallar con
+-- "Arithmetic overflow error converting numeric to data type numeric".
+-- Se usa un producto nuevo para no chocar con la PK del caso 8.
+INSERT INTO PRODUCTO (Tipo_de_producto, Descripccion, Precio, Nombre)
+VALUES ('Antibiotico', 'Caja x 14 capsulas', 1500.50, 'Amoxicilina');
+
+INSERT INTO DETALLE_HISTORICO (ID_Producto, Cod_Ticket, Precio_unitario_Historico)
+VALUES (2, 1, 1500.50);
+
+-- CASO 10: Eliminar un registro padre que tiene hijos (integridad referencial)
+-- El cliente 1 tiene la compra 1 asociada, asi que el DELETE deberia fallar
+-- por conflicto con la restriccion FK_ID_Cliente.
+DELETE FROM CLIENTE WHERE ID_Cliente = 1;
