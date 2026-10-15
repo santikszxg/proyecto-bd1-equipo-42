@@ -42,7 +42,7 @@ INSERT INTO TIPO_DE_EMPLEADO (Nombre, Apellido, DNI, Hora_inicio, Hora_fin)
 VALUES ('Marta', 'Suárez', 28456789, '12:00', '20:00');
 
 INSERT INTO CAJERO (ID_Empleado, ID_Compra)
-VALUES (2, 1);
+VALUES (3, 2); /* Solución del error: ID_Empleado = 2 e ID_Compra = 1 no existían */
 -- CASO 6: Alta valida de proveedor y relacion N:M con producto (SUMINISTRA)
 -- Crea una ubicacion, un proveedor asociado a ella y lo vincula con el producto 1.
 -- Deberia insertarse sin errores (UBICACION ya fue ampliada a VARCHAR(40) con el ALTER).
@@ -58,7 +58,7 @@ VALUES (1, 1);
 -- CASO 7: Alta valida de TICKET usando el valor DEFAULT de la fecha
 -- No se indica Fecha, asi que debe tomar GETDATE() automaticamente.
 -- Se vincula a la compra 1 (creada en el caso 3). Deberia insertarse sin errores.
-INSERT INTO TICKET (ID_compra) VALUES (1);
+INSERT INTO TICKET (ID_compra) VALUES (2); /* Solución del error: ID_compra = 1 no existía */
 
 SELECT Cod_Ticket, Fecha, ID_compra FROM TICKET; -- verificar que Fecha tenga la fecha actual
 
@@ -66,7 +66,7 @@ SELECT Cod_Ticket, Fecha, ID_compra FROM TICKET; -- verificar que Fecha tenga la
 -- Registra el precio del producto 1 en el ticket 1. 850.00 entra en DECIMAL(5,2).
 -- Deberia insertarse sin errores.
 INSERT INTO DETALLE_HISTORICO (ID_Producto, Cod_Ticket, Precio_unitario_Historico)
-VALUES (1, 1, 850.00);
+VALUES (1, 3, 850.00); /* Solución del error: Cod_Ticket = 1 no existía */
 
 -- CASO 9: Precio fuera de rango en DETALLE_HISTORICO (DECIMAL(5,2))
 -- DECIMAL(5,2) admite como maximo 999.99. Con 1500.50 deberia fallar con
@@ -76,7 +76,10 @@ INSERT INTO PRODUCTO (Tipo_de_producto, Descripccion, Precio, Nombre)
 VALUES ('Antibiotico', 'Caja x 14 capsulas', 1500.50, 'Amoxicilina');
 
 INSERT INTO DETALLE_HISTORICO (ID_Producto, Cod_Ticket, Precio_unitario_Historico)
-VALUES (2, 1, 1500.50);
+VALUES (2, 3, 1500.50);/* Solución del error: Cod_Ticket = 1 no existía */
+/* Antiguamente, la columna Precio_unitario_Historico estaba declarada como DECIMAL(5,2) 
+y este error era visible, sin embargo ahora ya no puesto que alteramos dicha columna a 
+DECIMAL(10,2) y este error desapareció*/
 
 -- CASO 10: Eliminar un registro padre que tiene hijos (integridad referencial)
 -- El cliente 1 tiene la compra 1 asociada, asi que el DELETE deberia fallar
