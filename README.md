@@ -16,7 +16,7 @@
 
 </div>
 
-## Integrantes
+## 👥 Integrantes
 - Lezcano, Axel Antonio
 - Ortiz, Santiago Tomas
 - Aquino, Carlos Paul
@@ -25,7 +25,7 @@
 
 ---
 
-## Índice del proyecto
+## 📄 Índice del proyecto
 
 ### Etapa 1 – Definición del caso
 - [Descripción del caso](docs/etapa-01/descripcion-caso.md)
@@ -63,7 +63,7 @@
 ---
 
 
-## Estructura del repositorio
+## 📂Estructura del repositorio
 
 ```
 proyecto-bd1-equipo-42/
