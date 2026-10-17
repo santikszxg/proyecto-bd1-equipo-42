@@ -228,3 +228,7 @@ ALTER TABLE HORARIO_ATENCION ALTER COLUMN Horario TIME(0) NOT NULL;
 --modificaciones en los tipos de datos de la tabla director tecnico
 ALTER TABLE DIRECT_TECNICO ALTER COLUMN Fecha_de_inicio DATE NOT NULL;
 ALTER TABLE DIRECT_TECNICO ALTER COLUMN Fecha_de_finalizacion DATE NOT NULL;
+
+-- Modificación en la tabla Detalle_historico: campo "cantidad" añadido
+ALTER TABLE DETALLE_HISTORICO ADD Cantidad INT NOT NULL DEFAULT 1;
+GO
