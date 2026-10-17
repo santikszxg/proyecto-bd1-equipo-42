@@ -48,7 +48,7 @@
 - [Pruebas y validación](docs/etapa-03/pruebas-validacion.md.txt)
 
 ### Etapa 4 – Consultas y reportes
-- [Casos de uso](docs/etapa-04/casos-uso.md.txt)
+- [Casos de uso](docs/etapa-04/casos-uso.md)
 - [Comprobante de venta](docs/etapa-04/comprobante.venta.md.txt)
 - [Consulta avanzada](docs/etapa-04/consulta-avanzada.md.txt)
 - [Informe de ventas](docs/etapa-04/informe-ventas.md.txt)
