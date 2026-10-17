@@ -3,11 +3,13 @@
 ### Problemas de la versión anterior
 - `CONTIENE` y `DETALLE_DE_COMPRA` guardaban casi lo mismo (qué producto va en qué compra), lo que generaba **información duplicada** y riesgo de inconsistencias.
 - El precio de la venta quedaba mezclado con datos de la compra (fecha, cantidad), sin separar la compra del comprobante.
+- No existe algun campo sobre la cantidad de productos que se compran en `DETALLE_HISTORICO`.
 
 ### Cómo lo soluciona la nueva versión
 - **`TICKET`**: representa el comprobante de una compra, con su propia fecha (`DEFAULT GETDATE()`).
 - **`DETALLE_HISTORICO`**: une producto y ticket (PK compuesta `ID_Producto + Cod_Ticket`) y guarda `Precio_unitario_Historico`, el precio **al momento de la venta**. Si `PRODUCTO.Precio` cambia, los tickets viejos conservan su valor real.
 - Una sola tabla intermedia reemplaza a las dos anteriores, eliminando la redundancia.
+- Se realizo el agregado de un campo `Cantidad` el cual se encarga de registrar la cantidad de productos de un tipo en la tabla `DETALLE_HISTORICO`.
 
 ### Mejora general
 El modelo queda más normalizado, sin duplicación y con trazabilidad de precios: `COMPRA → TICKET → DETALLE_HISTORICO → PRODUCTO`.
