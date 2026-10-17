@@ -232,3 +232,6 @@ ALTER TABLE DIRECT_TECNICO ALTER COLUMN Fecha_de_finalizacion DATE NOT NULL;
 -- Modificación en la tabla Detalle_historico: campo "cantidad" añadido
 ALTER TABLE DETALLE_HISTORICO ADD Cantidad INT NOT NULL DEFAULT 1;
 GO
+---- Añadida la restricción CHECK del campo "cantidad" en la tabla Detalle_historico
+ALTER TABLE DETALLE_HISTORICO
+ADD CONSTRAINT CK_Cantidad CHECK(Cantidad > 0);
