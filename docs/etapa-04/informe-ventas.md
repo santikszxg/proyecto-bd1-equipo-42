@@ -1,4 +1,3 @@
-# Explicación Detallada de la Consulta SQL (Caso de Uso 2)
 
 ## Contexto y Objetivo
 
