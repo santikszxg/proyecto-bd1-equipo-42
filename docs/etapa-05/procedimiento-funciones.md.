@@ -1,14 +1,18 @@
-# Función SQL: Calcular descuento por cliente
+# 1. Procedimientos y Funciones Almacenadas en SQL Server
 
-## 1. Descripción
+Este módulo contiene la implementación de la función escalar y el procedimiento almacenado adaptados al modelo de base de datos de la farmacia.
 
-La función `dbo.fn_CalcularDescuentoCliente` permite calcular el porcentaje de descuento que le corresponde a un cliente en función del monto total acumulado de sus compras.
+---
 
-Para realizar el cálculo, consulta la tabla `COMPRA`, suma los montos de las compras asociadas al cliente y aplica las reglas de descuento establecidas.
+## 1. Función Escalar: Calcular Descuento para Clientes Frecuentes
 
-El resultado se puede consultar para cada cliente mediante una consulta SQL sobre la tabla `CLIENTE`.
+### Descripción
+Determina el porcentaje de descuento a aplicar a un cliente según el historial de compras acumuladas en la tabla `COMPRA`.
 
-## 2. Código SQL completo
+### Reglas de Negocio:
+* **Más de $500.000 acumulados:** 10% de descuento.
+* **Más de $200.000 acumulados:** 5% de descuento.
+* **Caso contrario:** 0% de descuento.
 
 ```sql
 -- ============================================================================
@@ -41,145 +45,3 @@ BEGIN
     RETURN @porcentaje_descuento;
 END;
 GO
-
--- Uso sobre la tabla CLIENTE:
-SELECT 
-    ID_Cliente,
-    [Obra social],
-    dbo.fn_CalcularDescuentoCliente(ID_Cliente) AS PorcentajeDescuento
-FROM dbo.CLIENTE;
-GO
-```
-
-## 3. Explicación del funcionamiento
-
-### 3.1. Creación de la función
-
-```sql
-CREATE FUNCTION dbo.fn_CalcularDescuentoCliente (
-    @ID_Cliente INT
-)
-RETURNS DECIMAL(5,2)
-```
-
-Se crea una función denominada `fn_CalcularDescuentoCliente`, que recibe como parámetro el identificador de un cliente (`@ID_Cliente`).
-
-El tipo de dato `INT` permite recibir el identificador del cliente, mientras que `RETURNS DECIMAL(5,2)` establece que la función devuelve un valor numérico decimal que representa el porcentaje de descuento.
-
-### 3.2. Declaración de variables
-
-```sql
-DECLARE @monto_acumulado DECIMAL(12,2) = 0.00;
-DECLARE @porcentaje_descuento DECIMAL(5,2) = 0.00;
-```
-
-Se declaran dos variables:
-
-- `@monto_acumulado`: almacena el monto total acumulado de las compras del cliente.
-- `@porcentaje_descuento`: almacena el porcentaje de descuento que le corresponde.
-
-Ambas variables se inicializan en cero.
-
-### 3.3. Cálculo del monto acumulado
-
-```sql
-SELECT @monto_acumulado = ISNULL(SUM(Monto), 0.00)
-FROM dbo.COMPRA
-WHERE ID_Cliente = @ID_Cliente;
-```
-
-Se utiliza la función de agregación `SUM()` para sumar los montos de todas las compras asociadas al cliente indicado.
-
-La condición `WHERE ID_Cliente = @ID_Cliente` permite seleccionar únicamente las compras correspondientes a ese cliente.
-
-Por su parte, `ISNULL()` devuelve `0.00` cuando la suma es `NULL`, como ocurre cuando no existen compras que cumplan con la condición.
-
-De esta manera, si un cliente no tiene compras registradas, su monto acumulado se considera igual a cero.
-
-### 3.4. Aplicación de las reglas de descuento
-
-```sql
-IF @monto_acumulado > 500000.00
-    SET @porcentaje_descuento = 10.00;
-ELSE IF @monto_acumulado > 200000.00
-    SET @porcentaje_descuento = 5.00;
-ELSE
-    SET @porcentaje_descuento = 0.00;
-```
-
-Se utilizan las estructuras condicionales `IF` y `ELSE IF` para determinar el descuento correspondiente según el monto acumulado.
-
-Las reglas de negocio son las siguientes:
-
-| Monto acumulado de compras | Porcentaje de descuento |
-|:---|---:|
-| Mayor a $500.000 | 10 % |
-| Mayor a $200.000 y menor o igual a $500.000 | 5 % |
-| Menor o igual a $200.000 | 0 % |
-
-Las condiciones se evalúan en orden. Si el monto acumulado supera los $500.000, se asigna un descuento del 10 %. Si no supera ese límite, pero es mayor a $200.000, se asigna un descuento del 5 %. En los demás casos, el porcentaje es del 0 %.
-
-**Ejemplos de aplicación:**
-
-| Monto acumulado | Descuento obtenido |
-|---:|---:|
-| $150.000 | 0 % |
-| $200.000 | 0 % |
-| $250.000 | 5 % |
-| $500.000 | 5 % |
-| $600.000 | 10 % |
-
-### 3.5. Devolución del resultado
-
-```sql
-RETURN @porcentaje_descuento;
-```
-
-La instrucción `RETURN` devuelve el porcentaje de descuento calculado.
-
-Esto permite utilizar la función en otras consultas SQL que necesiten conocer el descuento correspondiente a un cliente.
-
-### 3.6. Consulta de los clientes
-
-```sql
-SELECT 
-    ID_Cliente,
-    [Obra social],
-    dbo.fn_CalcularDescuentoCliente(ID_Cliente) AS PorcentajeDescuento
-FROM dbo.CLIENTE;
-```
-
-Esta consulta recorre los registros de la tabla `CLIENTE` y muestra la información de cada cliente junto con el porcentaje de descuento calculado por la función.
-
-Las columnas obtenidas son:
-
-- `ID_Cliente`: identificador del cliente.
-- `[Obra social]`: valor almacenado en la columna correspondiente.
-- `PorcentajeDescuento`: porcentaje de descuento calculado mediante la función.
-
-Para cada registro de `CLIENTE`, se ejecuta la función pasando el identificador del cliente como argumento.
-
-**Nota:** se utilizan corchetes en `[Obra social]` porque el nombre de la columna contiene un espacio.
-
-## 4. Tablas involucradas
-
-### Tabla COMPRA
-
-La tabla `COMPRA` contiene los registros de las compras realizadas. La función utiliza los siguientes atributos:
-
-- `ID_Cliente`: identifica al cliente que realizó la compra.
-- `Monto`: representa el importe de la compra.
-
-Estos datos permiten calcular el total acumulado de compras de cada cliente.
-
-### Tabla CLIENTE
-
-La tabla `CLIENTE` contiene los registros de los clientes. Se utiliza para obtener el listado de clientes y consultar el porcentaje de descuento correspondiente a cada uno.
-
-## 5. Conclusión
-
-La función `dbo.fn_CalcularDescuentoCliente` permite centralizar las reglas de negocio relacionadas con los descuentos por compras acumuladas.
-
-Su implementación facilita la reutilización del código, evita repetir las mismas condiciones en diferentes consultas y permite calcular el porcentaje de descuento de cada cliente de manera individual.
-
-Es importante destacar que la función únicamente devuelve el porcentaje de descuento. No modifica los registros de las tablas ni aplica automáticamente el descuento al importe de una compra. Para calcular el precio final con descuento, sería necesario realizar una operación adicional utilizando el porcentaje obtenido.
