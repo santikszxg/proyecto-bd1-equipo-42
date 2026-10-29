@@ -1,111 +1,99 @@
 # Seguridad: permisos a nivel de usuarios y roles
 
-Script: [`scripts.sql`](scripts.sql)
-
 ## 1. Definición y objetivo
 
-La seguridad en una base de datos permite controlar qué usuarios pueden acceder a la información y qué operaciones pueden realizar. SQL Server permite manejar los permisos de forma individual (a cada usuario) o agrupándolos mediante roles.
+La seguridad en una base de datos permite controlar quién puede acceder a la información y qué puede hacer con ella. En SQL Server los permisos se pueden dar a cada usuario por separado o se pueden agrupar en roles.
 
-El objetivo es aplicar el **principio de mínimo privilegio**: cada usuario tiene solo los permisos que necesita para su trabajo.
+Para ello se trabaja en dos niveles:
+
+- Inicio de sesión (login): permite conectarse al servidor.
+- Usuario: se crea dentro de la base de datos a partir de un login, y es al que se le asignan los permisos.
+
+El objetivo es que cada usuario tenga solamente los permisos que necesita para hacer su trabajo (principio de mínimo privilegio).
 
 ## 2. Ventajas y aplicaciones
 
-- Protegen la información sensible del sistema.
-- Evitan modificaciones accidentales o no autorizadas.
-- Permiten asignar permisos según el puesto de cada empleado (cajero, farmacéutico, seguridad).
-- Los roles simplifican la administración: si entra un farmacéutico nuevo, solo se lo agrega al rol.
-- Mejoran la seguridad y el mantenimiento de la base de datos.
+- Protege la información de la base de datos.
+- Evita modificaciones accidentales o no autorizadas.
+- Permite asignar permisos según el puesto de cada empleado.
+- Los roles simplifican la administración, ya que los permisos se asignan una sola vez al rol y todos sus miembros los heredan.
+
+En el caso de la farmacia, por ejemplo, un cajero no debería poder modificar los precios de los productos, ni el personal de seguridad consultar las ventas realizadas.
 
 ## 3. Implementación en SQL Server Express
 
-Los pasos son:
+Los pasos realizados fueron los siguientes:
 
-1. Crear un inicio de sesión (`CREATE LOGIN`), que permite conectarse al servidor.
-2. Crear un usuario en la base asociado a ese login (`CREATE USER ... FOR LOGIN`).
-3. Dar permisos al usuario con `GRANT`, o crear un rol (`CREATE ROLE`), darle permisos al rol y agregar usuarios con `ALTER ROLE ... ADD MEMBER`.
+1. Crear el inicio de sesión con `CREATE LOGIN`.
+2. Crear el usuario en la base con `CREATE USER ... FOR LOGIN`.
+3. Asignar permisos con `GRANT`, o crear un rol con `CREATE ROLE`, darle permisos al rol y agregar usuarios con `ALTER ROLE ... ADD MEMBER`.
 
-Para las pruebas usamos `EXECUTE AS USER = '...'`, que ejecuta las sentencias como si fuéramos ese usuario, y `REVERT`, que vuelve a nuestro usuario. Así no hace falta desconectarse y entrar con cada login.
+Para probar los permisos se utilizó `EXECUTE AS USER`, que permite ejecutar las consultas en nombre de otro usuario, y `REVERT`, que vuelve al usuario original. De esta forma no fue necesario iniciar sesión con cada login por separado.
 
-## 4. Caso concreto aplicado a la farmacia
+## 4. Caso aplicado a la farmacia
 
-Adaptamos el ejemplo de la guía a nuestro modelo:
+El ejemplo de la guía se adaptó al modelo de la farmacia con los siguientes usuarios:
 
-| Usuario | Perfil | Permisos |
+| Usuario | Puesto | Permisos |
 |---|---|---|
-| `usuario_admin` | Administrador | Miembro de `db_owner` |
-| `usuario_cajero` | Cajero | `SELECT` sobre `COMPRA` y `EXECUTE` sobre `sp_RegistrarVentaCompleta` |
-| `usuario_farmaceutico` | Farmacéutico | Miembro de `rol_farmaceutico` (`SELECT` sobre `PRODUCTO`) |
-| `usuario_seguridad` | Personal de seguridad | Sin permisos |
+| usuario_admin | Administrador | Pertenece al rol db_owner |
+| usuario_cajero | Cajero | SELECT sobre COMPRA y EXECUTE sobre sp_RegistrarVentaCompleta |
+| usuario_farmaceutico | Farmacéutico | Pertenece a rol_farmaceutico (SELECT sobre PRODUCTO) |
+| usuario_seguridad | Seguridad | Ninguno |
 
-### Parte 1: permisos a nivel de usuarios
+### Permisos a nivel de usuarios
 
-El cajero puede consultar las compras pero no puede insertar directamente en la tabla `COMPRA`. Sin embargo, sí puede registrar una venta usando el procedimiento `sp_RegistrarVentaCompleta`, que armamos en el tema de procedimientos y funciones.
+Al cajero se le otorgó permiso para consultar la tabla COMPRA, pero no para insertar registros en ella. Sin embargo, puede registrar ventas mediante el procedimiento sp_RegistrarVentaCompleta, desarrollado en el tema de procedimientos y funciones almacenadas.
 
-De esta forma el cajero no puede cargar una compra "a mano", sino que siempre pasa por el procedimiento, que valida el stock, aplica el descuento y genera el ticket.
+De esta manera, el cajero no puede registrar una compra directamente en la tabla, sino que debe hacerlo a través del procedimiento, el cual valida el stock, aplica el descuento correspondiente y genera el ticket.
 
-### Parte 2: permisos a nivel de roles
+### Permisos a nivel de roles
 
-Creamos el rol `rol_farmaceutico` con permiso de lectura sobre `PRODUCTO` y agregamos al farmacéutico. El usuario de seguridad no pertenece al rol, por lo que no puede consultar los productos.
+Se creó el rol rol_farmaceutico con permiso de lectura sobre la tabla PRODUCTO y se incorporó al usuario del farmacéutico como miembro. El usuario de seguridad no pertenece al rol, por lo que no puede consultar los productos.
 
-## 5. Script de demostración y resultados
+## 5. Script y pruebas
 
-El script completo está en [`scripts.sql`](scripts.sql). Las pruebas se ejecutaron en SQL Server Express 16 (`localhost\SQLEXPRESS`).
-
-### Resumen de resultados
+El script se encuentra en [scripts.sql](scripts.sql). Las pruebas se realizaron en SQL Server Express.
 
 | Prueba | Usuario | Resultado esperado | Resultado obtenido |
 |---|---|---|---|
-| INSERT directo sobre `COMPRA` | `usuario_admin` | Correcto | ✅ Correcto (1 fila afectada) |
-| INSERT directo sobre `COMPRA` | `usuario_cajero` | Acceso denegado | ✅ Denegado (Mens. 229) |
-| EXEC `sp_RegistrarVentaCompleta` | `usuario_cajero` | Correcto | ✅ Correcto (stock 50 → 45) |
-| SELECT sobre `PRODUCTO` | `usuario_farmaceutico` (con rol) | Correcto | ✅ Correcto (devuelve los productos) |
-| SELECT sobre `PRODUCTO` | `usuario_seguridad` (sin rol) | Acceso denegado | ✅ Denegado (Mens. 229) |
+| INSERT en COMPRA | usuario_admin | Correcto | Correcto |
+| INSERT en COMPRA | usuario_cajero | Error | Error de permiso |
+| EXEC sp_RegistrarVentaCompleta | usuario_cajero | Correcto | Correcto |
+| SELECT en PRODUCTO | usuario_farmaceutico | Correcto | Correcto |
+| SELECT en PRODUCTO | usuario_seguridad | Error | Error de permiso |
 
-### Parte 1: permisos a nivel de usuarios
+### Prueba 1: el administrador inserta en COMPRA
 
-**Prueba 1: INSERT directo con `usuario_admin`**
+Al pertenecer al rol db_owner, la inserción se realiza correctamente.
 
-El administrador pertenece a `db_owner`, así que puede insertar sin problemas.
+![Captura: INSERT exitoso con usuario_admin](evidencias/captura_01_admin_insert.png)
 
-![Prueba 1](evidencias/captura_01_admin_insert.png)
+### Prueba 2: el cajero inserta en COMPRA
 
-**Prueba 2: INSERT directo con `usuario_cajero`**
+El cajero solo tiene permiso de consulta sobre COMPRA, por lo que SQL Server rechaza la inserción y muestra el error "Se denegó el permiso INSERT en el objeto 'COMPRA'".
 
-El cajero solo tiene permiso `SELECT` sobre `COMPRA`, por eso SQL Server rechaza el INSERT:
+![Captura: error de permiso INSERT con usuario_cajero](evidencias/captura_02_cajero_insert_denegado.png)
 
-```
-Mens. 229, Nivel 14, Estado 5
-Se denegó el permiso INSERT en el objeto 'COMPRA', base de datos 'Proyecto_Integrador_Farmacia', esquema 'dbo'.
-```
+### Prueba 3: el cajero registra una venta con el procedimiento
 
-![Prueba 2](evidencias/captura_02_cajero_insert_denegado.png)
+El mismo cajero que no pudo insertar en COMPRA sí puede registrar una venta mediante el procedimiento. Se registró la venta de 5 unidades del producto 1 y el stock disminuyó de 50 a 45 unidades.
 
-**Prueba 3: venta mediante `sp_RegistrarVentaCompleta` con `usuario_cajero`**
+![Captura: stock antes y después de la venta](evidencias/captura_03_cajero_procedimiento.png)
 
-El mismo cajero que no pudo insertar en `COMPRA` sí puede registrar una venta de 5 unidades a través del procedimiento. Se ve que el stock del producto 1 en `POSEE` baja de 50 a 45, así que el procedimiento registró la compra, el ticket y el detalle, y descontó el stock.
+### Prueba 4: el farmacéutico consulta los productos
 
-![Prueba 3](evidencias/captura_03_cajero_procedimiento.png)
+El usuario no tiene permisos asignados directamente, pero los hereda del rol, por lo que puede consultar los productos.
 
-### Parte 2: permisos a nivel de roles
+![Captura: consulta de productos con usuario_farmaceutico](evidencias/captura_04_farmaceutico_select.png)
 
-**Prueba 4: SELECT sobre `PRODUCTO` con `usuario_farmaceutico` (con rol)**
+### Prueba 5: el usuario de seguridad consulta los productos
 
-El farmacéutico no tiene permisos propios, pero los hereda de `rol_farmaceutico`, así que la consulta devuelve los productos.
+Al no pertenecer al rol, SQL Server muestra el error "Se denegó el permiso SELECT en el objeto 'PRODUCTO'".
 
-![Prueba 4](evidencias/captura_04_farmaceutico_select.png)
+![Captura: error de permiso SELECT con usuario_seguridad](evidencias/captura_05_seguridad_select_denegado.png)
 
-**Prueba 5: SELECT sobre `PRODUCTO` con `usuario_seguridad` (sin rol)**
+## Conclusión
 
-El usuario de seguridad no pertenece al rol, así que no puede consultar:
-
-```
-Mens. 229, Nivel 14, Estado 5
-Se denegó el permiso SELECT en el objeto 'PRODUCTO', base de datos 'Proyecto_Integrador_Farmacia', esquema 'dbo'.
-```
-
-![Prueba 5](evidencias/captura_05_seguridad_select_denegado.png)
-
-### Conclusión
-
-El cajero no puede modificar la tabla `COMPRA` directamente, pero sí puede registrar ventas a través del procedimiento almacenado. Así se mantiene el control de la lógica de negocio. Con los roles, los permisos se asignan una sola vez al rol y todos sus miembros los heredan.
+Las pruebas realizadas permitieron comprobar que los permisos funcionan según lo esperado. El cajero no puede modificar la tabla COMPRA directamente, pero sí puede registrar ventas mediante el procedimiento almacenado, lo que garantiza que cada venta pase por las validaciones del sistema. Por otro lado, el uso de roles permitió asignar los permisos al farmacéutico de una sola vez, mientras que el usuario que no pertenece al rol no tiene acceso a la información.
 
