@@ -58,7 +58,7 @@
 - [Procedimientos y funciones](docs/etapa-05/procedimiento-funciones.md.txt)
 - [Transacciones](docs/etapa-05/transacciones.md.txt)
 - [Triggers y auditoría](docs/etapa-05/triggers.auditoria.md.txt)
-- [Seguridad](docs/etapa-05/seguridad.md.txt)
+- [Seguridad](docs/etapa-05/seguridad)
 
 ---
 
