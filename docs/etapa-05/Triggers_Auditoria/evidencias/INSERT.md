@@ -1,4 +1,4 @@
-## Insercion de Medicamentos
+## Inserción de un Medicamento
 <img width="597" height="126" alt="image" src="https://github.com/user-attachments/assets/2130916a-7a60-4887-aff0-810f84d923c0" />
 
 ## Resultado:
