@@ -7,7 +7,7 @@
   <img width="200" alt="Vista previa del sistema" src="https://github.com/user-attachments/assets/778b6a3e-119e-44d3-841d-189245212f53" />
 </p>
 
-![Status](https://img.shields.io/badge/Estado-En_Desarrollo-blue?style=for-the-badge)
+![Status](https://img.shields.io/badge/Estado-Finalizado-green?style=for-the-badge)
 ![Database](https://img.shields.io/badge/Base_de_Datos-Relacional-informational?style=for-the-badge)
 
 <p align="center">
